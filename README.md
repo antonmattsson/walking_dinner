@@ -22,4 +22,5 @@ First, you need Python 3.x (This was written on version 3.6.1). Then you need to
 #### Running the script
 
 You need to have all the scripts in the same folder. The script can be run from the command line like this:
+
 ```python walking_dinner.py input_file.csv output_file.csv```
