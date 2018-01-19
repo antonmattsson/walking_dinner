@@ -7,8 +7,13 @@ import argparse
 import sys
 
 
-# Returns list of pair objects
-def create_pairs_by_distance(participants):
+# Match pairs by location
+def create_pairs_by_location(participants):
+    """
+    Create pairs by location
+    :param participants: dict with 3 fields: inda, near and far, each holding a list of Participant objects
+    :return: list of Pair objects
+    """
 
     # Get all the participants into groups in random order
     near = participants["near"]
@@ -20,10 +25,10 @@ def create_pairs_by_distance(participants):
     total_n = len(near) + len(far) + len(inda)
 
     # Check if the number is divisible by 6
+    # Put extra people aside, prioritize people living further away
     leftovers = []
     remainder = total_n % 6
     if remainder:
-
         while (len(far) > 0) & (len(leftovers) < remainder):
             leftovers.append(far.pop())
         while (len(near) > 0) & (len(leftovers) < remainder):
@@ -34,8 +39,8 @@ def create_pairs_by_distance(participants):
     left_n = int(len(near) + len(far) + len(inda))
     pairs = [None] * int((left_n / 2))
     i = 0
-    # Make pairs so that people from far are paired with people from Niemi if possible
-    # If not, then with people near otaniemi if possible
+    # Make pairs so that people from far are paired with people in if possible
+    # If not, then with people near if possible
     # If not, with each other
     while (len(far) > 0) & (len(inda) > 0):
         pairs[i] = Pair([far.pop(), inda.pop()])
@@ -48,7 +53,7 @@ def create_pairs_by_distance(participants):
     while len(far) > 0:
         pairs[i] = Pair([far.pop(), far.pop()])
         i += 1
-    # If there were more people in Otaniemi than needed to match people from far away, match them with people near
+    # If there were more people in than needed to match people from far away, match them with people near
     # and so on
     while (len(near) > 0) & (len(inda) > 0):
         pairs[i] = Pair([near.pop(), inda.pop()])
@@ -66,16 +71,25 @@ def create_pairs_by_distance(participants):
 
     return pairs
 
+
 def create_pairs_simple(participants):
+    """
+    Create pairs randomly
+    :param participants: list of Participant objects
+    :return: list of Pair objects
+    """
 
     shuffle(participants)
 
+    # Check if the number is divisible by 6
+    # Put extra people aside
     leftovers = []
     total_n = len(participants)
     remainder = total_n % 6
     if remainder:
         while len(leftovers) < remainder:
             leftovers.append(participants.pop())
+    # Create pairs
     pairs = []
     while len(participants) > 0:
         pairs.append(Pair([participants.pop(), participants.pop()]))
@@ -86,8 +100,13 @@ def create_pairs_simple(participants):
 
     return pairs
 
-# Create a submatrix for the lower triangular
+
 def create_submatrix_lower(d):
+    """
+    Create a submatrix for the lower triangular part of the complete (block) adjacency matrix
+    :param d: integer, the size of the matrix
+    :return: d times d 2D numpy array
+    """
     row = [1,2,3] + [0] * (d-3)
     submatrix = np.zeros((d, d))
 
@@ -101,8 +120,9 @@ def create_submatrix_lower(d):
 
 def set_hosts(pairs):
     """
-    Choose who hosts who on which meals
-    With a number of pairs higher than 9, no pair will see each other more than once
+    Set hosts for every meal, define rotation of pairs
+    :param pairs: list of Pair objects
+    :return: Nothing, modifies pairs in place
     """
 
     # Initialize adjajency matrix
@@ -145,6 +165,9 @@ def set_hosts(pairs):
 def write_results(pairs, outfile):
     """
     Write results to csv
+    :param pairs: list of Pair objects
+    :param outfile: string, output file path
+    :return: -
     """
 
     results = np.empty((len(pairs), 6), dtype='<U100')
@@ -161,19 +184,20 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("infile")
     parser.add_argument("outfile")
-    parser.add_argument("-d", "--distance", action="store_true")
+    parser.add_argument("-l", "--location", action="store_true")
     
     args = parser.parse_args()
     
     if (not args.infile) or (not args.outfile):
         print("Please provide both input and output file paths")
         sys.exit()
-    
-    # Run the principal functions
+
+    # Read input data
+    # Create pairs by location or by random
     rdr = Reader(args.infile)
-    if args.distance:
-        participants = rdr.read_by_distance()
-        pairs = create_pairs_by_distance(participants)
+    if args.location:
+        participants = rdr.read_by_location()
+        pairs = create_pairs_by_location(participants)
     else:
         participants = rdr.read_simple()
         pairs = create_pairs_simple(participants)

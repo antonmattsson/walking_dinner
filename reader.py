@@ -3,14 +3,23 @@ from participant import Participant
 import sys
 
 
-# Reader class for the .csv files
 class Reader:
+    """
+    Reader class for the .csv files
+    Currently, a minimum number of 18 participants is required
+    """
 
     def __init__(self, file, delimiter=","):
         self.file = file
         self.delimiter = delimiter
 
-    def check_header(self, hdr, distance):
+    def check_header(self, hdr, location):
+        """
+        Checks that the header of the file (column names) looks OK, exits if not
+        :param hdr: the header as list of strings
+        :param location: whether location will be used to create pairs
+        :return: None
+        """
         hdr_ok = True
         if hdr[0] != "Name":
             hdr_ok = False
@@ -23,7 +32,7 @@ class Reader:
             hdr_ok = False
             print("Third column is not called 'Diet'")
 
-        if distance:
+        if location:
             if len(hdr) < 4:
                 hdr_ok = False
                 print("Too few columns!")
@@ -33,16 +42,23 @@ class Reader:
         else:
             if len(hdr) > 3:
                 if hdr[3] == "Location":
-                    print("Note that distance is not used for pairing, you can turn the feature on"
-                          " by using the -d or --distance flag")
+                    print("Note that location is not used for pairing, you can turn the feature on"
+                          " by using the -l or --location flag")
 
 
         if not hdr_ok:
             print("Please check the input file")
             sys.exit()
 
-    # Returns dict of participants with 3 fields based on location
-    def read_by_distance(self):
+    def read_by_location(self):
+        """
+        Read the file and create Participant objects
+        Group participants into 3 groups based on location
+            - far
+            - near
+            - inda (because they are in da hood, sorry, 'in' is reserved)
+        :return: dict with 3 fields, each holding a list of Participant objects
+        """
 
         far = []
         near = []
@@ -50,7 +66,7 @@ class Reader:
         with open(self.file) as csv_file:
             rdr = csv.reader(csv_file, delimiter=self.delimiter)
             hdr = next(rdr, None)
-            self.check_header(hdr, distance=True)
+            self.check_header(hdr, location=True)
             for row in rdr:
                 if row[3] == "Far":
                     far.append(Participant(row[0], row[1], row[2]))
@@ -65,14 +81,17 @@ class Reader:
 
         return participants
 
-    # Return list of participants
     def read_simple(self):
+        """
+        Read the file and create Participant objects without grouping
+        :return: list of Participant objects
+        """
 
         participants = []
         with open(self.file) as csv_file:
             rdr = csv.reader(csv_file, delimiter=self.delimiter)
             hdr = next(rdr, None)
-            self.check_header(hdr, distance=False)
+            self.check_header(hdr, location=False)
             for row in rdr:
                 participants.append(Participant(row[0], row[1], row[2]))
         if len(participants) < 18:

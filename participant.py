@@ -1,6 +1,11 @@
 
-# Class for participants
 class Participant:
+    """
+    Class for holding basic participant information
+        - name: string
+        - diet: string
+        - contact: string
+    """
 
     def __init__(self, name, contact, diet):
         self.name = name
@@ -13,6 +18,15 @@ class Participant:
 
 # Class for pairs
 class Pair:
+    """
+    Class for pairs of participants
+        - participants: list of Participant objects
+        - entree_host: Pair to visit for entree
+        - main_host: Pair to visit for main course
+        - dessert_host: Pair to visit for dessert
+
+        one of the host fields is always None, indicating the meal the Pair is cooking themselves
+    """
 
     def __init__(self, participants):
         self.participants = participants
@@ -25,7 +39,7 @@ class Pair:
         for p in self.participants:
             names_str = names_str + p.name + ", "
         entree = self.entree_host.get_names() if self.entree_host is not None else "host"
-        return "Pair object. Participants:" + names_str + " Meal:" + self.meal + "Entree host" + entree
+        return "Pair object. Participants:" + names_str + "Entree host" + entree
 
     def get_names(self):
         names = ""
@@ -36,6 +50,10 @@ class Pair:
         return names
 
     def get_info(self):
+        """
+        Get information about the pair for writing results
+        :return: list of strings
+        """
 
         names = self.get_names()
         contacts = ""
