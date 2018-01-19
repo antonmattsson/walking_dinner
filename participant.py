@@ -2,22 +2,20 @@
 # Class for participants
 class Participant:
 
-    def __init__(self, name, contact, location, diet):
+    def __init__(self, name, contact, diet):
         self.name = name
-        self.location = location
         self.diet = diet
         self.contact = contact
 
     def __str__(self):
-        return "Participant object. Name:" + self.name + " Location:" + self.location + " Diet:" + self.diet
+        return "Participant object. Name:" + self.name + " Diet:" + self.diet
 
 
 # Class for pairs
 class Pair:
 
-    def __init__(self, participants, meal):
+    def __init__(self, participants):
         self.participants = participants
-        self.meal = meal
         self.entree_host = None
         self.main_host = None
         self.dessert_host = None
@@ -44,15 +42,14 @@ class Pair:
         diets = ""
         for participant in self.participants:
 
-        	if participant.contact != "":
-	            if contacts != "":
-	                contacts += " & "
-	            contacts += participant.contact
-
-	        if participant.diet != "":
-	            if diets != "":
-	                diets += " & "
-	            diets += participant.diet
+            if participant.contact != "":
+                if contacts != "":
+                    contacts += " & "
+                contacts += participant.contact
+            if participant.diet != "":
+                if diets != "":
+                    diets += " & "
+                diets += participant.diet
 
         entree = self.entree_host.get_names() if self.entree_host is not None else "host"
         main = self.main_host.get_names() if self.main_host is not None else "host"

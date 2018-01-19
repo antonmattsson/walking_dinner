@@ -8,7 +8,7 @@ import sys
 
 
 # Returns list of pair objects
-def create_pairs(participants):
+def create_pairs_by_distance(participants):
 
     # Get all the participants into groups in random order
     near = participants["near"]
@@ -33,37 +33,56 @@ def create_pairs(participants):
 
     left_n = int(len(near) + len(far) + len(inda))
     pairs = [None] * int((left_n / 2))
-    meals = ["entree"] * int((len(pairs)/3)) + ["main"] * int((len(pairs)/3)) + ["dessert"] * int((len(pairs)/3))
     i = 0
     # Make pairs so that people from far are paired with people from Niemi if possible
     # If not, then with people near otaniemi if possible
     # If not, with each other
-    while len(far) & len(inda):
-        pairs[i] = Pair([far.pop(), inda.pop()], meals[i])
+    while (len(far) > 0) & (len(inda) > 0):
+        pairs[i] = Pair([far.pop(), inda.pop()])
         i += 1
-    while len(far) & len(near):
-        pairs[i] = Pair([far.pop(), near.pop()], meals[i])
+    while (len(far) > 0) & (len(near) > 0):
+        pairs[i] = Pair([far.pop(), near.pop()])
         i += 1
-    if len(far):
+    if len(far) > 0:
         print("Had to make pairs where both live far away")
-    while len(far):
-        pairs[i] = Pair([far.pop(), far.pop()], meals[i])
+    while len(far) > 0:
+        pairs[i] = Pair([far.pop(), far.pop()])
         i += 1
     # If there were more people in Otaniemi than needed to match people from far away, match them with people near
     # and so on
-    while len(near) & len(inda):
-        pairs[i] = Pair([near.pop(), inda.pop()], meals[i])
+    while (len(near) > 0) & (len(inda) > 0):
+        pairs[i] = Pair([near.pop(), inda.pop()])
         i += 1
-    while len(near):
-        pairs[i] = Pair([near.pop(), near.pop()], meals[i])
+    while len(near) > 0:
+        pairs[i] = Pair([near.pop(), near.pop()])
         i += 1
-    while len(inda):
-        pairs[i] = Pair([inda.pop(), inda.pop()], meals[i])
+    while len(inda) > 0:
+        pairs[i] = Pair([inda.pop(), inda.pop()])
         i += 1
 
     # Add leftovers to pairs making the main course & dessert
     for j in range(0, len(leftovers)):
         pairs[j + int((len(pairs)/3))].participants.append(leftovers[j])
+
+    return pairs
+
+def create_pairs_simple(participants):
+
+    shuffle(participants)
+
+    leftovers = []
+    total_n = len(participants)
+    remainder = total_n % 6
+    if remainder:
+        while len(leftovers) < remainder:
+            leftovers.append(participants.pop())
+    pairs = []
+    while len(participants) > 0:
+        pairs.append(Pair([participants.pop(), participants.pop()]))
+
+    # Add leftovers to pairs making the main course & dessert
+    for j in range(len(leftovers)):
+        pairs[j + int((len(pairs) / 3))].participants.append(leftovers[j])
 
     return pairs
 
@@ -132,16 +151,17 @@ def write_results(pairs, outfile):
     for p, pair in enumerate(pairs):
         results[p] = pair.get_info()
     
-    np.savetxt(outfile, results, delimiter = ",", fmt='"%s"', comments = "",
-              header = "Names,Contact,Diet,Entree,Main,Dessert")
+    np.savetxt(outfile, results, delimiter=",", fmt='"%s"', comments="",
+               header="Names,Contact,Diet,Entree,Main,Dessert")
 
 
 if __name__ == "__main__":
     
     # Parse command line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("-in", "--infile")
-    parser.add_argument("-out", "--outfile")
+    parser.add_argument("infile")
+    parser.add_argument("outfile")
+    parser.add_argument("-d", "--distance", action="store_true")
     
     args = parser.parse_args()
     
@@ -151,7 +171,11 @@ if __name__ == "__main__":
     
     # Run the principal functions
     rdr = Reader(args.infile)
-    participants = rdr.read_to_objects()
-    pairs = create_pairs(participants)
+    if args.distance:
+        participants = rdr.read_by_distance()
+        pairs = create_pairs_by_distance(participants)
+    else:
+        participants = rdr.read_simple()
+        pairs = create_pairs_simple(participants)
     set_hosts(pairs)
     write_results(pairs, args.outfile)
