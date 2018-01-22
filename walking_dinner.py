@@ -127,29 +127,29 @@ def set_hosts(pairs):
 
     # Initialize adjajency matrix
     # 0 = no connection
-    # 1 = eat entree together
+    # 1 = eat starter together
     # 2 = eat main together
     # 3 = eat dessert together
     n_pairs = len(pairs)
     adjacency_matrix = np.zeros((n_pairs, n_pairs))
 
     third_n = int(n_pairs / 3)
-    # Get indices of entree, main and dessert hosts
-    entrees = list(range(third_n))
+    # Get indices of starter, main and dessert hosts
+    starters = list(range(third_n))
     mains = list(range(third_n,2 * third_n))
     desserts = list(range(2*third_n, n_pairs))
 
     # Create a submatrix and construct the block matrix
     submatrix = create_submatrix_lower(third_n)
 
-    adjacency_matrix[np.ix_(mains, entrees)] = adjacency_matrix[np.ix_(desserts, entrees)] = adjacency_matrix[np.ix_(desserts, mains)] = submatrix
-    adjacency_matrix[np.ix_(entrees, mains)] = adjacency_matrix[np.ix_(entrees, desserts)] = adjacency_matrix[np.ix_(mains, desserts)] = submatrix.T
+    adjacency_matrix[np.ix_(mains, starters)] = adjacency_matrix[np.ix_(desserts, starters)] = adjacency_matrix[np.ix_(desserts, mains)] = submatrix
+    adjacency_matrix[np.ix_(starters, mains)] = adjacency_matrix[np.ix_(starters, desserts)] = adjacency_matrix[np.ix_(mains, desserts)] = submatrix.T
 
     # Set hosts accordingly
-    for e in entrees:
-        entree_idx = np.where(adjacency_matrix[e,:] == 1)[0]
-        for ind in entree_idx:
-            pairs[ind].entree_host = pairs[e]
+    for e in starters:
+        starter_idx = np.where(adjacency_matrix[e,:] == 1)[0]
+        for ind in starter_idx:
+            pairs[ind].starter_host = pairs[e]
 
     for m in mains:
         main_idx = np.where(adjacency_matrix[m,:] == 2)[0]
@@ -175,7 +175,7 @@ def write_results(pairs, outfile):
         results[p] = pair.get_info()
     
     np.savetxt(outfile, results, delimiter=",", fmt='"%s"', comments="",
-               header="Names,Contact,Diet,Entree,Main,Dessert")
+               header="Names,Contact,Diet,Starter,Main,Dessert")
 
 
 if __name__ == "__main__":

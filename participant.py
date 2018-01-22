@@ -21,7 +21,7 @@ class Pair:
     """
     Class for pairs of participants
         - participants: list of Participant objects
-        - entree_host: Pair to visit for entree
+        - starter_host: Pair to visit for starter
         - main_host: Pair to visit for main course
         - dessert_host: Pair to visit for dessert
 
@@ -30,7 +30,7 @@ class Pair:
 
     def __init__(self, participants):
         self.participants = participants
-        self.entree_host = None
+        self.starter_host = None
         self.main_host = None
         self.dessert_host = None
 
@@ -38,8 +38,8 @@ class Pair:
         names_str = ""
         for p in self.participants:
             names_str = names_str + p.name + ", "
-        entree = self.entree_host.get_names() if self.entree_host is not None else "host"
-        return "Pair object. Participants:" + names_str + "Entree host" + entree
+        starter = self.starter_host.get_names() if self.starter_host is not None else "host"
+        return "Pair object. Participants:" + names_str + "Starter host" + starter
 
     def get_names(self):
         names = ""
@@ -69,10 +69,10 @@ class Pair:
                     diets += " & "
                 diets += participant.diet
 
-        entree = self.entree_host.get_names() if self.entree_host is not None else "host"
+        starter = self.starter_host.get_names() if self.starter_host is not None else "host"
         main = self.main_host.get_names() if self.main_host is not None else "host"
         dessert = self.dessert_host.get_names() if self.dessert_host is not None else "host"
 
-        info = [names, contacts, diets, entree, main, dessert]
+        info = [names, contacts, diets, starter, main, dessert]
 
         return info
