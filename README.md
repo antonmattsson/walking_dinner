@@ -62,6 +62,7 @@ The output file is a .csv file with 6 columns:
 The first three columns contain combined information of the participants in the pair/group. The last columns tell which pair is hosting them at which meal. For example, a pair with the following columns:
 
 Starter          Main  Dessert
+
 Donald & Enrique host  Angela & Emmanuel
 
 would be hosted at starter by Donald and Enrique, cook main course themselves and finish the evening with a dessert made by Angela & Emmanuel.
