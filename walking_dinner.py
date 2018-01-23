@@ -5,6 +5,7 @@ from random import shuffle
 import numpy as np
 import argparse
 import sys
+import pandas as pd
 
 
 # Match pairs by location
@@ -173,9 +174,13 @@ def write_results(pairs, outfile):
     results = np.empty((len(pairs), 6), dtype='<U100')
     for p, pair in enumerate(pairs):
         results[p] = pair.get_info()
+
+    results = pd.DataFrame(results)
+
+    results.to_csv(outfile, header=["Names","Contact","Diet","Starter","Main","Dessert"], index=False)
     
-    np.savetxt(outfile, results, delimiter=",", fmt='"%s"', comments="",
-               header="Names,Contact,Diet,Starter,Main,Dessert")
+    #np.savetxt(outfile, results, delimiter=",", fmt='"%s"', comments="",
+    #           header="Names,Contact,Diet,Starter,Main,Dessert")
 
 
 if __name__ == "__main__":
