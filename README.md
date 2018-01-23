@@ -1,6 +1,6 @@
 ### Walking dinner
 
-Walking dinner is an event where participants are assigned a pair, and each pair needs to cook either an entrée, a main dish or a dessert for two other pairs. Then pairs visit each other and eat every dish in different company. For a walking dinner to work perfectly, you need at least 18 participants = 9 pairs. Currently, this is the minimum number of participants supported.
+Walking dinner is an event where participants are assigned a pair, and each pair needs to cook either an starter, a main dish or a dessert for two other pairs. Then pairs visit each other and eat every dish in different company. For a walking dinner to work perfectly, you need at least 18 participants = 9 pairs. Currently, this is the minimum number of participants supported.
 
 
 ### Usage
